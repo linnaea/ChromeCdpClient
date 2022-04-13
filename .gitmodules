@@ -1,0 +1,3 @@
+[submodule "CdpCodeGen/devtools-protocol"]
+	path = CdpCodeGen/devtools-protocol
+	url = https://github.com/ChromeDevTools/devtools-protocol.git

@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CdpClient", "CdpClient\CdpClient.csproj", "{53AEF5AB-A540-42DF-BFC2-6369B0884C3D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CdpCodeGen", "CdpCodeGen\CdpCodeGen.csproj", "{A7B15CFC-D2FD-4503-9806-EAAA22B15BF1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{53AEF5AB-A540-42DF-BFC2-6369B0884C3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53AEF5AB-A540-42DF-BFC2-6369B0884C3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53AEF5AB-A540-42DF-BFC2-6369B0884C3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53AEF5AB-A540-42DF-BFC2-6369B0884C3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7B15CFC-D2FD-4503-9806-EAAA22B15BF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7B15CFC-D2FD-4503-9806-EAAA22B15BF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7B15CFC-D2FD-4503-9806-EAAA22B15BF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7B15CFC-D2FD-4503-9806-EAAA22B15BF1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

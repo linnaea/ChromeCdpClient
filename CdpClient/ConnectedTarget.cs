@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Net.WebSockets;
 using System.Text.Json;
@@ -12,7 +12,7 @@ public partial class ConnectedTarget : IDisposable
     private readonly WebSocket _connectTarget;
     private readonly CancellationTokenSource _stop = new();
     private readonly CancellationToken _stopToken;
-    private readonly ConcurrentDictionary<uint, TaskCompletionSource<ArraySegment<byte>>> _pending = new();
+    private readonly ConcurrentDictionary<uint, TaskCompletionSource<byte[]>> _pending = new();
     private int _requestCounter;
 
     public ConnectedTarget(WebSocket connectTarget)
@@ -49,7 +49,9 @@ public partial class ConnectedTarget : IDisposable
                 switch (meta) {
                 case { Id: { }, Method: null }:
                     if (_pending.TryRemove(meta.Id.Value, out var pendingTask)) {
-                        pendingTask.SetResult(data);
+                        var tr = new byte[bufLen];
+                        Array.Copy(buf, 0, tr, 0, bufLen);
+                        pendingTask.SetResult(tr);
                     }
 
                     break;
@@ -74,7 +76,7 @@ public partial class ConnectedTarget : IDisposable
         }
     }
 
-    public T DeserializeResponse<T>(ArraySegment<byte> resp)
+    public T DeserializeResponse<T>(byte[] resp)
     {
         return JsonSerializer.Deserialize<JsonRpcResponse<T, object>>(resp)!.Result;
     }
@@ -84,13 +86,13 @@ public partial class ConnectedTarget : IDisposable
         return JsonSerializer.Deserialize<JsonRpcRequest<T>>(resp)!.Params;
     }
 
-    public Task<ArraySegment<byte>> SendRequest<T>(string method, T param, bool fireAndForget = false)
+    public Task<byte[]> SendRequest<T>(string method, T param, bool fireAndForget = false)
     {
         var rpc = new JsonRpcRequest<T> {
             Id = fireAndForget ? null : unchecked((uint)Interlocked.Increment(ref _requestCounter)),
             Method = method, Params = param
         };
-        var tcs = new TaskCompletionSource<ArraySegment<byte>>();
+        var tcs = new TaskCompletionSource<byte[]>();
         if (_stop.IsCancellationRequested) {
             tcs.SetCanceled();
         } else {
@@ -103,14 +105,14 @@ public partial class ConnectedTarget : IDisposable
         return tcs.Task;
     }
 
-    private async void SendRequest<T>(JsonRpcRequest<T> rpc, TaskCompletionSource<ArraySegment<byte>> tcs)
+    private async void SendRequest<T>(JsonRpcRequest<T> rpc, TaskCompletionSource<byte[]> tcs)
     {
         try {
             await _connectTarget.SendAsync(new ArraySegment<byte>(JsonSerializer.SerializeToUtf8Bytes(rpc)),
                                            WebSocketMessageType.Text, true, _stopToken);
 
             if (!rpc.Id.HasValue)
-                tcs.SetResult(new ArraySegment<byte>(Array.Empty<byte>()));
+                tcs.SetResult(Array.Empty<byte>());
         }
         catch (Exception e) {
             if (rpc.Id.HasValue)
